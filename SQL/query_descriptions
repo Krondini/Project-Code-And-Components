@@ -1,0 +1,24 @@
+# Queries needed for project:
+
+# Case where new user is added:
+-- need to determine what the new user id should be (need to find MAX and add 1)
+-- need to INSERT user info into userInfo database
+-- need to INSERT user into newWorthInfo table (everything initialized to 0)
+
+# Case where user adds a new entry
+-- update the itemsEntered table with INSERT. Indicate with 1 or 0 if it is a liab or asset.
+-- update the net worth table (UPATE TABLE)
+-- need to return results of the updated netWorthInfo to display it to user (A,L,NW)
+
+# Case where user needs to update an entry
+-- UPDATE itemsEntered table (only need to update amount)
+-- if item amount is set to $0, need to DELETE that row of the table
+-- UPDATE netWorthInfo table (update all)
+
+#SENDING EMAILS TO OTHER USERS
+-- will need to get email of other user based on username
+
+NOTES FOR GROUP:
+how are we gonna store the user that is logged in?
+Do they automatically get logged out when they exit the page?
+
