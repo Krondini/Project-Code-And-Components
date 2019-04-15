@@ -1,4 +1,4 @@
-function Calculate Networth()
+function Calculate_Networth()
 {
 	var table = document.getElementById("stats_table");
 	var row_counter;

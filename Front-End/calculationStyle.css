@@ -240,3 +240,16 @@ li a.nav-bar:hover
 	color: #26de81; 
 	background-image: linear-gradient(grey, black);
 }
+
+.box
+{
+	width: 300px;
+	padding: 40px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background: #006266;
+	text-align: center;
+	font-family: Courier New;
+}
