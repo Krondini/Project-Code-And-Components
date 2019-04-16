@@ -1,5 +1,5 @@
-# This file contains draft temp data for our SQL database called net_worth_db
-
+# OLD DATA
+#Do not use
 
 #temp data for userinfo table
 insert into userInfo (userID, firstName, lastName, username, password, email) values (1, 'Jacquenetta', 'Hagger', 'jhagger0', '2nVnxeVrk4', 'jhagger0@home.pl');
