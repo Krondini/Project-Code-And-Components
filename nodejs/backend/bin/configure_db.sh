@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export PGPASSWORD='XIAOxiao1998!'
+export PGPASSWORD='Change this to your postgres password'
 
 echo "Configuring database"
 
