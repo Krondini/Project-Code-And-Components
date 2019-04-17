@@ -20,7 +20,11 @@
 	<div align="center">
 		<h2 style="font-family: Courier New"> Find Your Net Worth </h2>
 		<br><br><br>
-		<div class="box" style="background-image: radial-gradient(#000000, #006266)"> <a style="color: white"> Placeholder for Net Worth </a></div>
+		<div class="box" style="background-image: radial-gradient(#000000, #006266)" id="TotalNetworth"> <a style="color: white"> Placeholder for Net Worth: </a></div>
+		<script src="TotalNetworth.js" type="text/javascript">
+			var TotalNetworth = $(document).ready(Caluculate_Networth());
+			document.getElementById('TotalNetworth').innerHTML += TotalNetworth;
+		</script>
 	</div>
 
 </body>
