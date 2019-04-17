@@ -18,6 +18,7 @@ body
 	text-align: center;
 	background-image: radial-gradient(#000000, #006266); /* Edit */
 	/*height: 90%;*/
+	font-family: Courier New;
 }
 
 .box h1
@@ -26,6 +27,7 @@ body
 	text-transform: uppercase;
 	font-weight: 500; /* Edit, consider using for nav bars */
 	font-size: 400%;
+	font-family: Courier New;
 }
 
 .box input[type="text"], .box input[type="password"]
