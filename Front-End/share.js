@@ -11,13 +11,36 @@ var transporter = nodemailer.createTransport({
   }
 });
 
-var targetemail = document.getElementById("mailto");
+var targetemail = document.getElementById("sendEmail").value;
+
+var user_id = "select userID from userInfo where email = targetemail";
+
+var user_name = "select firstName from userInfo where email = targetemail" + ' ' + "select lastName from userInfo where email = targetemail";
+
+var send_text = '';
+
+if(document.getElementById("High").checked = true)
+{
+	send_text = "Your friend " + user_name + " has networth of " + "select netWorth from netWorthInfo where userID = user_id" + 
+	", total assets of " + "select totalAssets from netWorthInfo where userID = user_id" + ", and total liabilities" + 
+	"select totalLiabilities from netWorthInfo where userID = user_id";
+}
+else if(document.getElementById("Medium").checked = true)
+{
+	send_text = "Your friend " + user_name + " has networth of " + "select netWorth from netWorthInfo where userID = user_id" + 
+	", and total assets of " + "select totalAssets from netWorthInfo where userID = user_id" + ".";
+}
+else if(document.getElementById("Low").checked = true)
+{
+	send_text = "Your friend " + user_name + " has networth of " + "select netWorth from netWorthInfo where userID = user_id" + 
+	".";
+}
 
 var mailOptions = {
   from: 'youremail@gmail.com',
-  to: 'myfriend@yahoo.com',
-  subject: 'Your friend'+ user.firstname + user.lastname + 'share networth with you!',
-  text: 'That was easy!'
+  to: targetemail,
+  subject: 'Your friend '+ user_name + ' share networth with you!',
+  text: send_text
 };
 
 transporter.sendMail(mailOptions, function(error, info){
