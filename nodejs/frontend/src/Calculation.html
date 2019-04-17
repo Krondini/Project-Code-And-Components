@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" dir="itr">
+<head>
+	<meta charset="utf-8">
+	<title> Calculator </title>
+	<link rel="stylesheet" href="calculationStyle.css">
+</head>
+<body>
+	<ul class="nav-bar" style="float: left">
+		<li class="nav-bar"> <a class="nav-bar" href="index.html"> Home </a> </li>
+		<li class="nav-bar-active"> <a href="edit.html"> Add Item </a> </li>
+		<li class="nav-bar"> <a class="nav-bar" href="edit.html"> Edit Net Worth </a> </li>  <!-- Link to Edit Net Worth -->
+	</ul>
+	<ul class="nav-bar" style="float: right">
+		<li class="nav-bar"> <a class="nav-bar" href="login.html"> Login </a></li>
+		<li class="nav-bar"> <a class="nav-bar" href="#"> Create Account </a></li>
+		<li class="nav-bar"> <a class="nav-bar" href="#"> Share </a> </li>  <!-- Link to Share Page -->
+	</ul>
+	
+	<form class="form" >
+		<h1 class="font-weight-bold"> Fill in the Form to add an Asset or Liability to the data </h1>
+		<input type="text" placeholder="Enter name of Asset or Liability">\
+		<ul class="choice">
+  			<li class="choice">
+    			<input type="radio" id="a" name="selector">
+    			<label for="a">Asset</label>
+    
+    			<div class="check"></div>
+  			</li>
+
+  			<li class="choice">
+    			<input type="radio" id="s" name="selector">
+    			<label for="s">Liability</label>
+    
+    			<div class="check"><div class="inside"></div></div>
+  			</li>
+		</ul>
+		<input type="text" placeholder="Enter value of Asset or Liability">
+		<select class = "select-css">
+			<option selected> Choose a category </option>
+			<option> Property </option>
+			<option> Stocks </option>
+			<option> Bank Accounts </option>
+			<option> Credit Cards </option>
+			<option> Loans </option>
+			<option> ... </option>
+		</select>
+		<input type="submit" value="Add Asset/Liability">
+		<input type="submit" value="Finish Adding Elements">
+		<br>
+		<table class="table table-bordered" id="stats_table">
+			<tr>
+				<th> Type </th>
+				<th> Value </th>
+				<th> Category </th>
+			</tr>
+		</table>
+	</form>
+</body>
