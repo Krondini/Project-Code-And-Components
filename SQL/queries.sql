@@ -120,3 +120,8 @@ Select email from userinfo where username = var_username;
 	--dummy sample
 Select email from userinfo where username = 'lgilbrider';
 
+
+------------
+#HOME PAGE, get the users net worth info
+select totalAssets, totalLiabilities, netWorth from netWorthInfo Where userID = '1';
+
