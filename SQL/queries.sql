@@ -21,9 +21,9 @@ insert into netWorthInfo (userID, totalAssets, totalLiabilities, netWorth) value
 # Case where user adds a new entry
 -- update the itemsEntered table with INSERT. Indicate with 1 or 0 if it is a liab or asset.
 -- need to use actual variables holding user info
-insert into itemsEntered (itemID, userID, name, category, type, amount) values (var_item, var_user, var_name, var_category, var_indicator, var_amount);
+insert into itemsEntered (itemID, userID, name, category, type, amount) values ((Select max(itemID) + 1 from (select * from itemsEntered) a), var_user, var_name, var_category, var_indicator, var_amount);
 	--dummy example for testing:
-insert into itemsEntered (itemID, userID, name, category, type, amount) values (1, 23, 'mazda', 'Vehicles', 1, 7252.82);
+insert into itemsEntered (itemID, userID, name, category, type, amount) values ((Select max(itemID) + 1 from (select * from itemsEntered) a), 23, 'mazda', 'Vehicles', 1, 7252.82);
 
 -- update the net worth table (UPATE TABLE)
 
