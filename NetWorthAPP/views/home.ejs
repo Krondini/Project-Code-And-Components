@@ -20,7 +20,22 @@
 	<div align="center">
 		<h2 style="font-family: Courier New"> Find Your Net Worth </h2>
 		<br><br><br>
-		<div class="box" style="background-image: radial-gradient(#000000, #006266)"> <a style="color: white"> Placeholder for Net Worth </a></div>
+		<div class="box" style="background-image: radial-gradient(#000000, #006266)"> <a style="color: white">
+<% 
+if (data) { 
+    var net_worth = 'fuck';
+    data.forEach(function(item){
+	 if(item.netWorth){
+		net_worth = item.netWorth;
+	 }
+         else{
+		net_worth = 'fail';
+         }
+    });
+		%>
+  	 <%- net_worth %> 
+<% } %>
+		</a></div>
 	</div>
 
 </body>
