@@ -17,13 +17,14 @@ const dbConfig = {
 var db = pgp(dbConfig);
 
 app.get('/home', function (req, res) {
-  var query = "select * from netWorthInfo;";
+  var query = "select * from networthinfo where userid = '1';";
   db.any(query)
-        .then(function (rows) {
-            res.render('home',{
-				my_title: "Home Page",
-				data: rows
-			})
+    .then(function (rows) {	
+	console.log(rows)
+        res.render('home',{
+			my_title: "Home Page",
+			data: rows
+		})
         })
 	.catch(function (err) {
             // display error message in case an error
