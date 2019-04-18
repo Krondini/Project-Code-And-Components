@@ -25,10 +25,29 @@
 		<input type="submit" value="Edit Asset/Liability">
 		<table class="table table-bordered" id="stats_table">
 			<tr>
+				<th> Name </th>
 				<th> Type </th>
 				<th> Value </th>
 				<th> Category </th>
 			</tr>
+<%
+if (data) {
+        var table = '';
+	var type = '';
+	var value = '';
+        data.forEach(function(item){
+		if(item.type == 1){
+			type = 'Asset';
+			value = '$' + item.amount;
+		}
+		else{
+			type = 'Liability';
+			value = '$-' + item.amount;
+		}
+		table += '<tr> <td> ' + item.name + ' </td> <td> ' + type + ' </td> <td> ' + value + ' </td> <td> ' + item.category + ' </td> </tr>';	
+        }); %>
+        <%- table %>
+<% } %>	
 		</table>
 	</form>
 </body>

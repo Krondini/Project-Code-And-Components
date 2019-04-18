@@ -7,11 +7,11 @@ app.set('view engine', 'ejs')
 var pgp = require('pg-promise')();
 
 const dbConfig = {
-	host: 'localhost',
-	port: 5432,
-	database: 'net_worth_db',
-	user: 'postgres',
-	password: 'pass'
+  host: 'localhost',
+  port: 5432,
+  database: 'net_worth_db',
+  user: 'postgres',
+  password: 'pass'
 };
 
 var db = pgp(dbConfig);
@@ -19,14 +19,14 @@ var db = pgp(dbConfig);
 app.get('/home', function (req, res) {
   var query = "select * from networthinfo where userid = '1';";
   db.any(query)
-    .then(function (rows) {	
-	console.log(rows)
+    .then(function (rows) { 
+  console.log(rows)
         res.render('home',{
-			my_title: "Home Page",
-			data: rows
-		})
+      my_title: "Home Page",
+      data: rows
+    })
         })
-	.catch(function (err) {
+  .catch(function (err) {
             // display error message in case an error
             request.flash('error', err);
             response.render('home', {
@@ -37,11 +37,27 @@ app.get('/home', function (req, res) {
 })
 
 app.get('/add', function (req, res){
-  res.render('Calculation');
+  var query = "select * from itemsentered where userid = '1';";
+  db.any(query)
+    .then(function (rows) { 
+  console.log(rows)
+        res.render('Calculation',{
+      my_title: "Add Page",
+      data: rows
+    })
+  })
 })
 
 app.get('/edit', function (req, res){
-  res.render('edit');
+  var query = "select * from itemsentered where userid = '1';";
+  db.any(query)
+    .then(function (rows) { 
+  console.log(rows)
+        res.render('edit',{
+      my_title: "edit Page",
+      data: rows
+    })
+  })
 })
 
 app.get('/create_account', function (req, res){
