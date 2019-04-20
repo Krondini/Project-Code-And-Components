@@ -72,10 +72,43 @@ app.get('/create_account', function (req, res){
 })
 
 app.post('/create_account', function (req, res){
+	// Retrive information from form
 	var user = req.body.username,
 		pass = req.body.password,
-		email = req.body.email;
+		email_ = req.body.email;
 	
+	// Retrive possible queries
+	var user_query = 'SELECT username FROM userInfo WHERE username = user;',
+		email_query = 'SELECT email FROM userInfo WHERE email = email_;';
+	
+	// Compare form info to queries
+	// If info does match anything in DB
+	// Send an alert and repromt form
+	db.task('get-everything', task => {
+		return task.batch([
+			task.any(user_query),
+			task.any(email_query)
+			]);
+	})
+	.then(function (user, pass, email_) {
+		if (user == user_query)
+		{
+			alert('This username is already taken');
+			res.render('create_account');
+		} 
+		else if(email_ == email_query)
+		{
+			alert('This email address is already taken');
+			res.render('create_account');
+		}
+		else{
+			alert('Account created!');
+		}
+	})
+	.catch(function (err){
+		request.flash('Error', err);
+		res.render('Calculation');
+	})
 })
 
 app.get('/share', function (req, res){
