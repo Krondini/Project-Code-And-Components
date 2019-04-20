@@ -107,7 +107,7 @@ app.post('/create_account', function (req, res){
 	})
 	.catch(function (err){
 		request.flash('Error', err);
-		res.render('Calculation');
+		res.redirect('/home');
 	})
 })
 
