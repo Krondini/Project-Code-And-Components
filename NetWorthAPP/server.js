@@ -3,7 +3,7 @@ const app = express()
 
 
 app.use(express.static('public'));
-app.set('view engine', 'ejs')
+app.set('view engine', 'ejs');
 var pgp = require('pg-promise')();
 
 const dbConfig = {
@@ -15,6 +15,12 @@ const dbConfig = {
 };
 
 var db = pgp(dbConfig);
+
+
+// Redirection because we're lazy
+app.get('/', function(req,res){
+	res.redirect('/home');
+})
 
 app.get('/home', function (req, res) {
   var query = "select * from networthinfo where userid = '1';";
@@ -61,7 +67,15 @@ app.get('/edit', function (req, res){
 })
 
 app.get('/create_account', function (req, res){
-  res.render('createAccount');
+	res.render('createAccount');
+
+})
+
+app.post('/create_account', function (req, res){
+	var user = req.body.username,
+		pass = req.body.password,
+		email = req.body.email;
+	
 })
 
 app.get('/share', function (req, res){
