@@ -31,22 +31,6 @@ app.get('/', function(req,res){
 	res.redirect('/home');
 })
 
-
-app.get('/share', function (req, res){
-  res.render('share');
-})
-
-app.get('/login', function (req, res){
-  res.render('login');
-})
-
-app.get('/create_account', function (req, res){
-  res.render('createAccount');
-
-})
-
-
-
 app.get('/home', function (req, res) {
   var query = "select * from networthinfo where userid = '1';";
   db.any(query)
@@ -67,7 +51,6 @@ app.get('/home', function (req, res) {
         })
 })
 
-
 app.get('/add', function (req, res){
   var query = "select * from itemsentered where userid = '1';";
   db.any(query)
@@ -79,13 +62,6 @@ app.get('/add', function (req, res){
     })
   })
 })
-
-
-
-
-
-
-
 
 app.get('/edit', function (req, res){
   var query = "select * from itemsentered where userid = '1';";
@@ -99,44 +75,10 @@ app.get('/edit', function (req, res){
   })
 })
 
-
-app.post('/create_account/add_user',function (req, res){
-
-  var usr = req.body.username;
-  var pass = req.body.password;
-  var email_ = req.body.email;
-  console.log(usr);
-  console.log(pass);
-  console.log(email_);
-
-  //var user_query = 'SELECT * FROM userInfo;';
-  var user_query = "SELECT username FROM userInfo WHERE username = '"+ usr + "';";
-  var email_query = "SELECT email FROM userInfo where email = '" + email_ +"';";
-
-  db.task('get-everything', task => {
-    return task.batch([
-      task.any(user_query),
-      task.any(email_query)
-      ]);
-  })
-  .then(info => {
-    res.redirect('/create_account');
-    console.log('it worked!!!!!!!!!!!!!!!!');
-  })
-  .catch(error => {
-    res.redirect('/create_account');
-    console.log('there was an error!!!');
+app.get('/create_account', function (req, res){
+	res.render('createAccount');
 
 })
-
-
-
-
-
-})
-
-
-/*
 
 app.post('/create_account', function (req, res){
 	// Retrive information from form
@@ -178,10 +120,17 @@ app.post('/create_account', function (req, res){
 		res.redirect('/home');
 	});
 });
-*/
 
+
+
+app.get('/share', function (req, res){
+  res.render('share');
+})
+
+app.get('/login', function (req, res){
+  res.render('login');
+})
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!')
 })
-
