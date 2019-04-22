@@ -129,36 +129,93 @@ app.get('/edit', function (req, res){
 })
 
 
+
+
+class table {
+  static storeAccount (use,pas,ema,repas, first, last){
+    return new Promise( (resolve, reject) => {
+      var re = /\S+@\S+\.\S+/;
+      if(!use || !pas || !ema || !repas || !first || !last){
+        const error = new Error('Please enter all box');
+        return reject(error);
+      }
+      if(!re.test(ema)){
+        const error = new Error('The email is invalid');
+        return reject(error);
+      }
+      if(repas != pas){
+        const error = new Error('repet passord does not match');
+        return reject(error);
+      }
+      if(use.length > 64){
+        const error = new Error('Username is too long');
+        return reject(error);
+      }
+      if(pas.length > 64){
+        const error = new Error('Password is too long');
+        return reject(error);
+      }
+      var q = "insert into userInfo (userID, firstName, lastName, username, password, email) values( (Select max(userID) + 1 from (select * from userInfo) a),$4, $5, $1, $2, $3)"
+      db.none(
+        q,
+        [use, pas, ema,first, first, last]
+      );
+      resolve();
+    });
+  }
+}
+
+
 app.post('/create_account/add_user',function (req, res){
 
-
+  var first = req.body.first;
+  var last = req.body.last
   var usr = req.body.username;
   var pass = req.body.password;
   var email_ = req.body.email;
+  var repas = req.body.repassword;
   console.log(usr);
   console.log(pass);
   console.log(email_);
+  console.log(repas);
+  console.log(first);
+  console.log(last);
+
 
   //var user_query = 'SELECT * FROM userInfo;';
   var user_query = "SELECT username FROM userInfo WHERE username = '"+ usr + "';";
   var email_query = "SELECT email FROM userInfo where email = '" + email_ +"';";
-
   db.task('get-everything', task => {
     return task.batch([
-      task.any(user_query),
-      task.any(email_query)
+      task.none(user_query),
+      task.none(email_query)
       ]);
   })
   .then(info => {
-    res.redirect('/create_account');
-    console.log('it worked!!!!!!!!!!!!!!!!');
+        return table.storeAccount( usr, pass, email_, repas, first, last );
+  })
+  .then( () => {
+        var query = "SELECT username, password, userID FROM userInfo WHERE username = '" + usr + "' AND password = '" + pass + "';";
+      return db.any(query);
+  })
+  .then(rows => {
+    if(rows.length == 1){
+      ID = rows[0].userid;
+      res.redirect('/home');
+    }
+    else{
+      res.redirect('/login');
+    }
   })
   .catch(error => {
     res.redirect('/create_account');
-    console.log('there was an error!!!');
+    console.log('there is an error');
+    throw (error);
   })
 })
 
+
+//-----------------------------------------------------
 app.post('/login/verify', function (req, res){
   var username = req.body.username;
   var password = req.body.password;
