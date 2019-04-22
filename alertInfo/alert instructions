@@ -1,5 +1,0 @@
-Someone add the 'alert-node' folder to the node modules folder.
-
-Then in server.js:
-	-At top of script do: var alert = require('alert-node');
-	- in a get or post you can then do: alert("put message here"); 

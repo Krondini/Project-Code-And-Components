@@ -69,7 +69,8 @@ app.get('/home', function (req, res) {
     })
     .catch(function (err) {
             // display error message in case an error
-            alert('error');
+            //
+            //alert('error');
             res.render('home', {
                 title: 'Home Page Error',
                 data: ''
