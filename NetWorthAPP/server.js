@@ -31,11 +31,17 @@ app.use(express.static(__dirname + '/'));//This line is necessary for us to use 
 
 // Redirection because we're lazy
 app.get('/', function(req,res){
-  res.redirect('/home');
+  res.redirect('/login');
 })
 
 
 app.get('/share', function (req, res){
+  if (ID == 0 )
+  {
+    alert("You must login first to continue!")
+    res.redirect('/login');
+
+  }
   res.render('share');
 })
 
@@ -44,11 +50,18 @@ app.get('/login', function (req, res){
 })
 
 app.get('/create_account', function (req, res){
+
   res.render('createAccount');
 
 })
 
 app.get('/home', function (req, res) {
+  if (ID == 0 )
+  {
+    alert("You must login first to continue!")
+    res.redirect('/login');
+
+  }
   var up1 = "UPDATE networthinfo Set totalAssets = ASSET.totA FROM (Select userID, sum(amount) totA from itemsEntered where type = 1 Group by userId) ASSET WHERE networthinfo.userID = ASSET.userID;";
   var up2 = "UPDATE networthinfo Set totalLiabilities = LIAB.totA FROM (Select userID, sum(amount) totA from itemsEntered where type = 0 Group by userId) LIAB WHERE networthinfo.userID = LIAB.userID;";
   var up3 = "UPDATE netWorthInfo SET netWorth = (totalAssets - totalLiabilities);";
@@ -80,6 +93,12 @@ app.get('/home', function (req, res) {
 
 
 app.get('/add', function (req, res){
+  if (ID == 0 )
+  {
+    alert("You must login first to continue!")
+    res.redirect('/login');
+
+  }
   var query = "select * from itemsentered where userid = '" + ID + "';";
   db.any(query)
     .then(function (rows) { 
@@ -93,6 +112,12 @@ app.get('/add', function (req, res){
 
 
 app.get('/edit', function (req, res){
+  if (ID == 0 )
+  {
+    alert("You must login first to continue!")
+    res.redirect('/login');
+
+  }
   var query = "select * from itemsentered where userid = '" + ID + "';";
   db.any(query)
     .then(function (rows) { 
@@ -105,6 +130,7 @@ app.get('/edit', function (req, res){
 
 
 app.post('/create_account/add_user',function (req, res){
+
 
   var usr = req.body.username;
   var pass = req.body.password;
