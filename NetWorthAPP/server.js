@@ -188,15 +188,13 @@ app.post('/edit/commit', function (req, res){
 
   var edit = "UPDATE itemsEntered Set amount = '" + amount + "' WHERE itemID = (SELECT itemID FROM itemsEntered WHERE name = '" + name + "');";
   var del = "Delete from itemsEntered where itemID = (SELECT itemID FROM itemsEntered WHERE name = '" + name + "');";
-
-
-  if(isNaN(amount)){
-     alert('Value has to be a number');
-     res.redirect('/edit');
-  }
-
+  
   if(amount == 0){
   db.any(del);
+  }
+  else if(isNaN(amount)){
+     alert('Value has to be a number');
+     res.redirect('/edit');
   }
   else{
   db.any(edit);

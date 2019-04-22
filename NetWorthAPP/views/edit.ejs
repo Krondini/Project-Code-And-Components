@@ -18,10 +18,10 @@
 		<li> <a href="share"> Share </a> </li> <!-- Link to Share Page -->
 	</ul>
 
-	<form class = "form">
+	<form class = "form" action="/edit/commit" method="post">
 		<h1> Enter information of an existing object to edit/remove the object </h1>
-		<input type="text" placeholder="Enter name of Asset or Liability">
-		<input type="text" placeholder="Enter new value or Asset or Libaility (0 to remove entirely)">
+		<input type="text" placeholder="Enter name of Asset or Liability" name = "names" id = "names">
+		<input type="text" placeholder="Enter new value or Asset or Libaility (0 to remove entirely)" name = "newV" id = "newV">
 		<input type="submit" value="Edit Asset/Liability">
 		<table class="table table-bordered" id="stats_table">
 			<tr>
