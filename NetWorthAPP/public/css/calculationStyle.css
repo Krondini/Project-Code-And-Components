@@ -168,13 +168,15 @@ input[type=radio]:checked ~ label{
 }
 .select-css::-ms-expand {
 	display: none;
+
 }
 .select-css:hover {
 	border-color: #FFFFFF;
+	background-color: black;
 }
 .select-css:focus {
 	border-color: #006266;
-	color: #222; 
+	color: white; 
 	outline: none;
 }
 .select-css option {

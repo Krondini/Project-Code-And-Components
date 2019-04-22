@@ -34,7 +34,7 @@ app.get('/', function(req,res){
   res.redirect('/login');
 })
 
-
+/*
 app.get('/share', function (req, res){
   if (ID == 0 )
   {
@@ -43,7 +43,151 @@ app.get('/share', function (req, res){
 
   }
   res.render('share');
+}) */
+app.get('/share', function (req, res){
+  res.render('share',{
+    failed : false
+  })
 })
+
+
+
+
+
+
+
+app.post('/share', function (req, res){
+
+  var selector1 = null;
+  var selector2 = null;
+  var selector3 = null;
+
+  if (req.body.selector1 != undefined)
+  {
+    selector1 = req.body.selector1;
+  }
+
+  if (req.body.selector2 != undefined)
+  {
+    selector2 = req.body.selector2;
+  }
+
+  if (req.body.selector3 != undefined)
+  {
+    selector3 = req.body.selector3;
+  }
+
+//install nodemailer first
+//enter: npm install nodemailer  
+
+    var nodemailer = require('nodemailer'); 
+
+  var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'netWorthAppShare@gmail.com', //We need to create a public email address to send the information;
+      pass: '123networth'
+    }
+  });
+
+  var targetemail = req.body.email;
+  var targetcomment = req.body.comment;
+
+  var send_text = "12345";
+  var user_email = "select email from userInfo where userID = '" + ID + "';" ;
+  var user_name_1 = "select firstName from userInfo where userID = '" + ID + "';" 
+  var user_name_2 = "select lastName from userInfo userID = '" + ID + "';";
+  var net_worth = "select netWorth from netWorthInfo where userID = '" + ID + "';";
+  
+  var total_assets = "select totalAssets from netWorthInfo where userID = '" + ID + "';";
+  var total_liabilities = "select totalLiabilities from netWorthInfo where userID = '"+ ID +"';";
+
+  var select = "select *, (SELECT totalLiabilities FROM netWorthInfo Where userID = '"+ID+"'), (select totalAssets from netWorthInfo where userID = '"+ID+"'), (select netWorth from netWorthInfo where userID  ='"+ID+"')from userInfo where userID = '" + ID + "';";
+
+  var a ='';
+  var b ='';
+  db.task('get-everything', task => {
+    return task.batch([
+      // task.any(user_email),
+      // //task.any(user_name_1),
+      // //task.any(user_name_2),
+      // task.any(net_worth),
+      // task.any(total_assets),
+      // task.any(total_liabilities)
+      task.one(select)
+      ]);
+  })
+  .then(info => {
+    //res.redirect('/create_account'); 
+    var {email}             = info[0];
+    var {firstname}         = info[0];
+    var {lastname}          = info[0];
+    var {networth}          = info[0];
+    var {totalAssets}       = info[0];
+    var {totalassets}       = info[0];
+    var {totalliabilities}  = info[0];
+    console.log(info[0]);
+    if(selector1 != null)
+    { 
+      console.log(firstname);
+      console.log(send_text);
+      send_text = "Your friend " + firstname  + " " + lastname + " has networth of " + networth + 
+      ", total assets of " + totalassets + ", and total liabilities of " + totalliabilities + ".";
+      console.log(send_text);
+      
+    }
+    else if(selector2 != null)
+    {
+      send_text = "Your friend " + firstname + " " + lastname + " has networth of " + networth + 
+      ", total assets of " + totalassets + ".";
+    }
+    
+    else if(selector3 !=null)
+    {
+      send_text = "Your friend " + firstname + " " + lastname + " has networth of " + networth +
+      ".";
+    } 
+
+    a = firstname;
+    b = lastname;
+    
+    send_text += "\n Comment: " + targetcomment;
+    var mailOptions = {
+      from: 'netWorthAppShare@gmail.com',
+      to: targetemail,
+      //liru4968@colorado.edu
+      subject: 'Your friend '+ a + " " + b + ' share networth with you!',
+      text: send_text
+    };
+    return transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+        alert('Email failed to send');
+        res.render('share')
+        // 'alert-node'.alert('Email send failed')
+        //console.log(error);
+        console.log(mailOptions);
+      } else {
+        alert('Email sent successfully');
+        res.render('share')
+        //alert('email sent successfully')
+        console.log(mailOptions);
+        console.log('Email sent: ' + info.response);
+      }
+    }); 
+  })
+  .then(() => {
+
+  })
+  .catch(error => {
+    console.log('there was an error!!!');
+    //res.redirect('/create_account');
+    throw (error);
+    
+  })
+})
+
+//--------------------------------------------------------
+
 
 app.get('/login', function (req, res){
   res.render('login');

@@ -17,28 +17,28 @@
 		<li class="nav-bar-active"> <a class="nav-bar" href="share"> Share </a> </li>  <!-- Link to Share Page -->
 	</ul>
 
-	<form class = "form" action="mailto:someone@email.com" method="post" enctype="text/plain">
+	<form class = "form" action="/share" method="post" enctype="X-www-form-urlencoded">
 		<h1 class="font-weight-bold"> Fill in information to send an email </h1>
 		<input type="text" name= "email" placeholder="Enter Email to send to">
 		<input type="text" name="comment" placeholder="Enter a Comment">
 		<h2> Please Choice a chare setting </h2>
 		<ul class="choice">
   			<li class="choice">
-    			<input type="radio" id="High" name="selector">
+    			<input type="radio" id="High" name="selector1">
     			<label for="High">High Sharing (Everything will be shared)</label>
     
     			<div class="check"></div>
   			</li>
 
   			<li class="choice">
-    			<input type="radio" id="Medium" name="selector">
+    			<input type="radio" id="Medium" name="selector2">
     			<label for="Medium">Medium Sharing (total net worth and percentage of categories)</label>
     
     			<div class="check"><div class="inside"></div></div>
   			</li>
 
   			<li class="choice">
-    			<input type="radio" id="Low" name="selector">
+    			<input type="radio" id="Low" name="selector3">
     			<label for="Low">Low Sharing (just net worth)</label>
     
     			<div class="check"></div>
@@ -47,4 +47,6 @@
 
 		<input type="submit" value="Send">
 	</form>
+	<script type="text/javascript">
+	</script>
 </body>
