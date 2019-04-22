@@ -20,6 +20,8 @@ const dbConfig = {
 
 var db = pgp(dbConfig);
 
+var ID = 0;
+
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/'));//This line is necessary for us to use relative paths and access our resources directory
@@ -28,7 +30,7 @@ app.use(express.static(__dirname + '/'));//This line is necessary for us to use 
 
 // Redirection because we're lazy
 app.get('/', function(req,res){
-	res.redirect('/home');
+  res.redirect('/home');
 })
 
 
@@ -48,7 +50,7 @@ app.get('/create_account', function (req, res){
 
 
 app.get('/home', function (req, res) {
-  var query = "select * from networthinfo where userid = '1';";
+  var query = "select * from networthinfo where userid = '" + ID + "';";
   db.any(query)
     .then(function (rows) { 
   console.log(rows)
@@ -79,11 +81,6 @@ app.get('/add', function (req, res){
     })
   })
 })
-
-
-
-
-
 
 
 
@@ -126,57 +123,67 @@ app.post('/create_account/add_user',function (req, res){
   .catch(error => {
     res.redirect('/create_account');
     console.log('there was an error!!!');
-
+})
 })
 
-
-
-
-
+app.post('/login/verify', function (req, res){
+  var username = req.body.username;
+  var password = req.body.password;
+  var query = "SELECT username, password, userID FROM userInfo WHERE username = '" + username + "' AND password = '" + password + "';";
+  db.any(query)
+    .then(function (rows) { 
+        if(rows.length == 1){
+      ID = rows[0].userid;
+      res.redirect('/home');
+  }
+  else{
+    res.redirect('/login');
+  }
+})
 })
 
 
 /*
 
 app.post('/create_account', function (req, res){
-	// Retrive information from form
+  // Retrive information from form
 
-	var user = req.body.username;
-	var	pass = req.body.password;
-	var	email_ = req.body.email;
-	
-	// Retrive possible queries
-	var user_query = 'SELECT username FROM userInfo WHERE username = user;';
-		email_query = 'SELECT email FROM userInfo WHERE email = email_;';
-	
-	// Compare form info to queries
-	// If info does match anything in DB
-	// Send an alert and repromt form
-	db.task('get-everything', task => {
-		return task.batch([
-			task.any(user_query),
-			task.any(email_query)
-			]);
-	})
-	.then(function (user, pass, email_) {
-		if (user == user_query)
-		{
-			alert('This username is already taken');
-			res.render('create_account');
-		} 
-		else if(email_ == email_query)
-		{
-			alert('This email address is already taken');
-			res.render('create_account');
-		}
-		else{
-			alert('Account created!');
-		}
-	})
-	.catch(function (err){
-		req.flash('Error', err);
-		res.redirect('/home');
-	});
+  var user = req.body.username;
+  var pass = req.body.password;
+  var email_ = req.body.email;
+  
+  // Retrive possible queries
+  var user_query = 'SELECT username FROM userInfo WHERE username = user;';
+    email_query = 'SELECT email FROM userInfo WHERE email = email_;';
+  
+  // Compare form info to queries
+  // If info does match anything in DB
+  // Send an alert and repromt form
+  db.task('get-everything', task => {
+    return task.batch([
+      task.any(user_query),
+      task.any(email_query)
+      ]);
+  })
+  .then(function (user, pass, email_) {
+    if (user == user_query)
+    {
+      alert('This username is already taken');
+      res.render('create_account');
+    } 
+    else if(email_ == email_query)
+    {
+      alert('This email address is already taken');
+      res.render('create_account');
+    }
+    else{
+      alert('Account created!');
+    }
+  })
+  .catch(function (err){
+    req.flash('Error', err);
+    res.redirect('/home');
+  });
 });
 */
 
@@ -184,4 +191,3 @@ app.post('/create_account', function (req, res){
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!')
 })
-
