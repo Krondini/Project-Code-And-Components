@@ -18,12 +18,13 @@
 		<li> <a href="share"> Share </a> </li> <!-- Link to Share Page -->
 	</ul>
 	<div align="center">
-		<h2 style="font-family: Courier New"> Find Your Net Worth </h2>
+		<h1 style="font-family: Courier New"> Find Your Net Worth </h1>
 		<br><br><br>
-		<div class="box" style="background-image: radial-gradient(#000000, #006266)"> <a style="color: white">
+		<div class="box" style="background-image: radial-gradient(#000000, #006266)"> <h2>
 <% 
 if (data) { 
     var net_worth = '';
+    console.log(data);
     data.forEach(function(item){
 	 if(item.networth){
 		net_worth = '$' + item.networth;
@@ -35,7 +36,7 @@ if (data) {
 		%>
   	 <%- net_worth %> 
 <% } %>
-		</a></div>
+		</h2></div>
 	</div>
 
 </body>

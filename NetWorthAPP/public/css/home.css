@@ -7,6 +7,18 @@ body
 	background: #006266;	
 }
 
+h1{
+	color: white;
+	font-weight: 300;
+	font-size: 500%;
+}
+
+h2{
+	color: white;
+	font-weight: 300;
+	font-size: 900%;
+}
+
 /*Navigation Bars*/
 ul
 {
@@ -51,7 +63,8 @@ li a:hover
 
 .box
 {
-	width: 300px;
+	width: 65%;
+	height: 55%;
 	padding: 40px;
 	position: absolute;
 	top: 50%;

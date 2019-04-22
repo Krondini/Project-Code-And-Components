@@ -155,11 +155,13 @@ class table {
         const error = new Error('Password is too long');
         return reject(error);
       }
-      var q = "insert into userInfo (userID, firstName, lastName, username, password, email) values( (Select max(userID) + 1 from (select * from userInfo) a),$4, $5, $1, $2, $3)"
+      var q = "insert into userInfo (userID, firstName, lastName, username, password, email) values( (Select max(userID) + 1 from (select * from userInfo) a),$4, $5, $1, $2, $3)";
+      var q2 = "insert into netWorthInfo (userID, totalAssets, totalLiabilities, netWorth) values ((Select max(userID) from (select * from userInfo) a), 0.0, 0.0, 0.0);";
       db.none(
         q,
         [use, pas, ema,first, first, last]
       );
+      db.none(q2);
       resolve();
     });
   }
@@ -174,12 +176,6 @@ app.post('/create_account/add_user',function (req, res){
   var pass = req.body.password;
   var email_ = req.body.email;
   var repas = req.body.repassword;
-  console.log(usr);
-  console.log(pass);
-  console.log(email_);
-  console.log(repas);
-  console.log(first);
-  console.log(last);
 
 
   //var user_query = 'SELECT * FROM userInfo;';
@@ -201,6 +197,7 @@ app.post('/create_account/add_user',function (req, res){
   .then(rows => {
     if(rows.length == 1){
       ID = rows[0].userid;
+      alert("Welcome! You are now logged in.");
       res.redirect('/home');
     }
     else{
