@@ -17,28 +17,31 @@
 		<li> <a href="share"> Share </a> </li> <!-- Link to Share Page -->
 	</ul>
 
-	<form class="box" action="/create_account" method="post">
+	<form class="box" action="/create_account/add_user" method="post">
 		<h1 class="font-weight-bold" for="username"> Create Account </h1>
+		<input type="text" placeholder="Enter your First Name" name="first">
+		<input type="text" placeholder="Enter your Last Name" name="last">
 		<input type="text" placeholder="Enter a Username" name="username">
 		<input type="password" placeholder="Enter a Password" name="password">
 		<input type="password" placeholder="Re-Enter your Password" name="repassword">
 		<input type="text" placeholder="Enter your Email" name="email">
+		<input type="submit" value="Create Account">
 
-	<form class="box" action="/create_account/add_user" method="post">
+	<!-- <form class="box" action="/create_account/add_user" method="post">
 		<h1 class="font-weight-bold" > Create Account </h1>
 		<div class="form-group row">
-		<!--
+		
 						<label class="col-sm-2 col-form-label"  for="color_name">Color Name:</label>
 						<div class="col-sm-10">
 							<input type="text" class="form-control" name="color_name" id="color_name" placeholder="Enter Color's Name">
 						</div>
 					</div>
-		-->
+		
 		<input type="text" for = "username" placeholder="Enter a Username" name="username" id = "username">
 		<input type="password" placeholder="Enter a Password" name="password" id = "password">
 		<input type="password" placeholder="Re-Enter your Password" name="repassword" id = "repassword">
 		<input type="text" placeholder="Enter your Email" name="email" id = "email">
-		<input type="submit" value="Create Account">
+		<input type="submit" value="Create Account"> -->
 	</form>
 </body>
 </html>

@@ -19,32 +19,32 @@
 	</ul>
 
 	<div>
-	<form class="form" >
+	<form class="form" action="/add/commit" method="post">
 		<!-- <div class="box" align="center" style="background-color: green">
 			<a> Your net worth is: <script type="text/javascript"> function Calculate_Networth() </script></a>
 		</div>
 		<br><br> -->
 
 		<h1 class="font-weight-bold"> Fill in the Form to add an Asset or Liability to the data </h1>
-		<input type="text" placeholder="Enter name of Asset or Liability">
+		<input type="text" placeholder="Enter name of Asset or Liability" name = "names" id = "names">
 		<ul class="choice">
   			<li class="choice">
-    			<input type="radio" id="a" name="selector">
+    			<input type="radio" id="a" name="a">
     			<label for="a">Asset</label>
     
     			<div class="check"></div>
   			</li>
 
   			<li class="choice">
-    			<input type="radio" id="s" name="selector">
+    			<input type="radio" id="s" name="s">
     			<label for="s">Liability</label>
     
     			<div class="check"><div class="inside"></div></div>
   			</li>
 		</ul>
-		<input type="text" placeholder="Enter value of Asset or Liability"><br><br>
+		<input type="text" placeholder="Enter value of Asset or Liability" name = "value" id = "value"><br><br>
 
-		<select class = "select-css">
+		<select class = "select-css" name = "cat" id = "cat">
 			<option selected> Choose a category </option>
 			<option> Property </option>
 			<option> Stocks </option>

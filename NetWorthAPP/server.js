@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+var alert = require('alert-node');
 
 
 app.use(express.static('public'));
@@ -48,18 +49,27 @@ app.get('/create_account', function (req, res){
 })
 
 app.get('/home', function (req, res) {
+  var up1 = "UPDATE networthinfo Set totalAssets = ASSET.totA FROM (Select userID, sum(amount) totA from itemsEntered where type = 1 Group by userId) ASSET WHERE networthinfo.userID = ASSET.userID;";
+  var up2 = "UPDATE networthinfo Set totalLiabilities = LIAB.totA FROM (Select userID, sum(amount) totA from itemsEntered where type = 0 Group by userId) LIAB WHERE networthinfo.userID = LIAB.userID;";
+  var up3 = "UPDATE netWorthInfo SET netWorth = (totalAssets - totalLiabilities);";
   var query = "select * from networthinfo where userid = '" + ID + "';";
-  db.any(query)
-    .then(function (rows) { 
-  console.log(rows)
-        res.render('home',{
-      my_title: "Home Page",
-      data: rows
+  db.task('get-everything',task => {
+  return task.batch([
+    task.any(up1),
+    task.any(up2),
+    task.any(up3),
+    task.any(query)
+  ]);
     })
-        })
-  .catch(function (err) {
+    .then(function (rows) { 
+        res.render('home',{
+          my_title: "Home Page",
+          data: rows[3]
+      })
+    })
+    .catch(function (err) {
             // display error message in case an error
-            req.flash('error', err);
+            alert('error');
             res.render('home', {
                 title: 'Home Page Error',
                 data: ''
@@ -72,7 +82,6 @@ app.get('/add', function (req, res){
   var query = "select * from itemsentered where userid = '" + ID + "';";
   db.any(query)
     .then(function (rows) { 
-  console.log(rows)
         res.render('Calculation',{
       my_title: "Add Page",
       data: rows
@@ -86,7 +95,6 @@ app.get('/edit', function (req, res){
   var query = "select * from itemsentered where userid = '" + ID + "';";
   db.any(query)
     .then(function (rows) { 
-  console.log(rows)
         res.render('edit',{
       my_title: "edit Page",
       data: rows
@@ -140,7 +148,82 @@ app.post('/login/verify', function (req, res){
 })
 })
 
+app.post('/add/commit', function (req, res){
+  var name = req.body.names;
+  var Asset = req.body.a;
+  var Liab = req.body.s;
+  var value = req.body.value;
+  var cat = req.body.cat;
+  var indic;
+  if(Asset && Liab){
+  alert('Cannot be both an Asset and a Liability');
+  res.redirect('/add');
+  }
+  else if(Asset){
+  indic = 1;
+  }
+  else if(Liab){
+  indic = 0;
+  }
+  else{
+  alert('Must be either an Asset or a Liability');
+  res.redirect('/add');
+  }
+  
+  if(isNaN(value)){
+     alert('Value has to be a number');
+     res.redirect('/add');
+  }
+  
+  var query = "insert into itemsEntered (itemID, userID, name, category, type, amount) values ((Select max(itemID) + 1 from (select * from itemsEntered) a), '" + ID + "','" + name + "','" + cat + "','" + indic + "','" + value + "');"
+  db.any(query);
+  res.redirect('/add');
+})
 
+
+app.post('/edit/commit', function (req, res){
+  var name = req.body.names;
+  var amount = req.body.newV;
+
+  var edit = "UPDATE itemsEntered Set amount = '" + amount + "' WHERE itemID = (SELECT itemID FROM itemsEntered WHERE name = '" + name + "');";
+  var del = "Delete from itemsEntered where itemID = (SELECT itemID FROM itemsEntered WHERE name = '" + name + "');";
+
+
+  if(isNaN(amount)){
+     alert('Value has to be a number');
+     res.redirect('/edit');
+  }
+
+  if(amount == 0){
+  db.any(del);
+  }
+  else{
+  db.any(edit);
+  }
+  res.redirect('/edit');
+})
+
+/*
+app.post('/home/calc', function(req, res){
+  var up1 = "UPDATE networthinfo Set totalAssets = ASSET.totA FROM (Select userID, sum(amount) totA from itemsEntered where type = 1 Group by userId) ASSET WHERE networthinfo.userID = ASSET.userID;";
+  var up2 = "UPDATE networthinfo Set totalLiabilities = LIAB.totA FROM (Select userID, sum(amount) totA from itemsEntered where type = 0 Group by userId) LIAB WHERE networthinfo.userID = LIAB.userID;";
+  var up3 = "UPDATE netWorthInfo SET netWorth = (totalAssets - totalLiabilities);";
+
+  db.task('get-everything', task => {
+  return task.batch([
+    task.any(up1),
+    task.any(up2),
+    task.any(up3)
+  ])
+  })
+  .then(info => {
+  res.render('/home');
+  console.log('hi');
+  })
+  .catch(error => {
+  console.log('f');
+  })
+})*/
 /*
 <<<<<<< HEAD
 app.post('/create_account', function (req, res){
