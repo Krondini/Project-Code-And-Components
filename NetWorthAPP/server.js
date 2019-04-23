@@ -40,6 +40,7 @@ app.get('/share', function (req, res){
 
 app.get('/login', function (req, res){
   res.render('login');
+<<<<<<< HEAD
 })
 
 app.get('/create_account', function (req, res){
@@ -47,6 +48,15 @@ app.get('/create_account', function (req, res){
 
 })
 
+=======
+})
+
+app.get('/create_account', function (req, res){
+  res.render('createAccount');
+
+})
+
+>>>>>>> eded17218b385265e7fc7a83a12e4a51f37f5513
 
 
 app.get('/home', function (req, res) {
@@ -144,8 +154,15 @@ app.post('/login/verify', function (req, res){
 
 
 /*
+<<<<<<< HEAD
 app.post('/create_account', function (req, res){
   // Retrive information from form
+=======
+
+app.post('/create_account', function (req, res){
+  // Retrive information from form
+
+>>>>>>> eded17218b385265e7fc7a83a12e4a51f37f5513
   var user = req.body.username;
   var pass = req.body.password;
   var email_ = req.body.email;
