@@ -40,24 +40,12 @@ app.get('/share', function (req, res){
 
 app.get('/login', function (req, res){
   res.render('login');
-<<<<<<< HEAD
 })
 
 app.get('/create_account', function (req, res){
   res.render('createAccount');
 
 })
-
-=======
-})
-
-app.get('/create_account', function (req, res){
-  res.render('createAccount');
-
-})
-
->>>>>>> eded17218b385265e7fc7a83a12e4a51f37f5513
-
 
 app.get('/home', function (req, res) {
   var query = "select * from networthinfo where userid = '" + ID + "';";
@@ -133,7 +121,7 @@ app.post('/create_account/add_user',function (req, res){
   .catch(error => {
     res.redirect('/create_account');
     console.log('there was an error!!!');
-})
+  })
 })
 
 app.post('/login/verify', function (req, res){
