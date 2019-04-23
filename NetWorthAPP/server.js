@@ -69,7 +69,7 @@ app.get('/home', function (req, res) {
 
 
 app.get('/add', function (req, res){
-  var query = "select * from itemsentered where userid = '1';";
+  var query = "select * from itemsentered where userid = '" + ID + "';";
   db.any(query)
     .then(function (rows) { 
   console.log(rows)
@@ -83,7 +83,7 @@ app.get('/add', function (req, res){
 
 
 app.get('/edit', function (req, res){
-  var query = "select * from itemsentered where userid = '1';";
+  var query = "select * from itemsentered where userid = '" + ID + "';";
   db.any(query)
     .then(function (rows) { 
   console.log(rows)
