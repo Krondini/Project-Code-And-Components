@@ -10,7 +10,7 @@ var bodyParser = require('body-parser'); //Ensure our body-parser tool has been 
 app.use(bodyParser.json());              // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-var popup = require('popups');
+
 
 
 const dbConfig = {
@@ -18,7 +18,7 @@ const dbConfig = {
   port: 5432,
   database: 'net_worth_db',
   user: 'postgres',
-  password: 'XIAOxiao1998!'
+  password: 'pass'
 };
 
 var db = pgp(dbConfig);
@@ -96,39 +96,44 @@ app.get('/edit', function (req, res){
     })
   })
 })
-
-
 // helper functions that work with database
-class table {
-  static storeAccount (use,pas,ema,repas){
-    return new Promise( (resolve, reject) => {
-      if(repas != pas){
-        const error = new Error('repet passord does not match');
-        return reject(error);
-      }
-      if(use.length > 64){
-        const error = new Error('Username is too long');
-        return reject(error);
-      }
-      if(pas.length > 64){
-        const error = new Error('Password is too long');
-        return reject(error);
-      }
-      var q = "insert into userInfo (userID, firstName, lastName, username, password, email) values( (Select max(userID) + 1 from (select * from userInfo) a),'NA', 'NA', $1, $2, $3)"
-      db.none(
-        q,
-        [use, pas, ema]
-      );
-      resolve();
-    });
+  class table {
+    static storeAccount (use,pas,ema,repas, first, last){
+      return new Promise( (resolve, reject) => {
+        var re = /\S+@\S+\.\S+/;
+        if(!use || !pas || !ema || !repas || !first || !last){
+          const error = new Error('Please enter all box');
+          return reject(error);
+        }
+        if(!re.test(ema)){
+          const error = new Error('The email is invalid');
+          return reject(error);
+        }
+        if(repas != pas){
+          const error = new Error('repet passord does not match');
+          return reject(error);
+        }
+        if(use.length > 64){
+          const error = new Error('Username is too long');
+          return reject(error);
+        }
+        if(pas.length > 64){
+          const error = new Error('Password is too long');
+          return reject(error);
+        }
+        var q = "insert into userInfo (userID, firstName, lastName, username, password, email) values( (Select max(userID) + 1 from (select * from userInfo) a),$4, $5, $1, $2, $3)"
+        db.none(
+          q,
+          [use, pas, ema,first, first, last]
+        );
+        resolve();
+      });
+    }
   }
-}
-
-var username = '';
-
 
 app.post('/create_account/add_user',function (req, res){
-
+  var first = req.body.first;
+  var last = req.body.last
   var usr = req.body.username;
   var pass = req.body.password;
   var email_ = req.body.email;
@@ -137,6 +142,9 @@ app.post('/create_account/add_user',function (req, res){
   console.log(pass);
   console.log(email_);
   console.log(repas);
+  console.log(first);
+  console.log(last);
+
 
   //var user_query = 'SELECT * FROM userInfo;';
   var user_query = "SELECT username FROM userInfo WHERE username = '"+ usr + "';";
@@ -149,17 +157,24 @@ app.post('/create_account/add_user',function (req, res){
       ]);
   })
   .then(info => {
-    return table.storeAccount(usr, pass, email_, repas);
+    return table.storeAccount( usr, pass, email_, repas, first, last );
   })
   .then( () => {
-   
-    res.redirect('/home');
-    console.log('it worked!!!!!!!!!!!!!!!!');
-    
+    var query = "SELECT username, password, userID FROM userInfo WHERE username = '" + usr + "' AND password = '" + pass + "';";
+      return db.any(query);
+  })
+  .then(rows => {
+    if(rows.length == 1){
+      ID = rows[0].userid;
+      res.redirect('/home');
+    }
+    else{
+      res.redirect('/login');
+    }
   })
   .catch(error => {
     res.redirect('/create_account');
-    popup.alert({content: 'Username or Email is already exist'});
+    //popup.alert({content: 'Username or Email is already exist'});
     console.log('there is an error');
     throw (error);
   })
@@ -172,45 +187,15 @@ app.post('/login/verify', function (req, res){
   db.any(query)
     .then(function (rows) { 
         if(rows.length == 1){
+          console.log(ID);
           ID = rows[0].userid;
+;
           res.redirect('/home');
         }
         else{
           res.redirect('/login');
         }
     })
-})
-
-app.post('/add/commit', function (req, res){
-  var name = req.body.names;
-  var Asset = req.body.a;
-  var Liab = req.body.s;
-  var value = req.body.value;
-  var cat = req.body.cat;
-  var indic;
-  if(Asset && Liab){
-  alert('Cannot be both an Asset and a Liability');
-  res.redirect('/add');
-  }
-  else if(Asset){
-  indic = 1;
-  }
-  else if(Liab){
-  indic = 0;
-  }
-  else{
-  alert('Must be either an Asset or a Liability');
-  res.redirect('/add');
-  }
-  
-  if(isNaN(value)){
-     alert('Value has to be a number');
-     res.redirect('/add');
-  }
-  
-  var query = "insert into itemsEntered (itemID, userID, name, category, type, amount) values ((Select max(itemID) + 1 from (select * from itemsEntered) a), '" + ID + "','" + name + "','" + cat + "','" + indic + "','" + value + "');"
-  db.any(query);
-  res.redirect('/add');
 })
 
 
