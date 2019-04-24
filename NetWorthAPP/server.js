@@ -72,7 +72,7 @@ app.get('/home', function (req, res) {
 
 
 app.get('/add', function (req, res){
-  var query = "select * from itemsentered where userid = '1';";
+  var query = "select * from itemsentered where userid = '"+ ID +"';";
   db.any(query)
     .then(function (rows) { 
   console.log(rows)
@@ -86,7 +86,7 @@ app.get('/add', function (req, res){
 
 
 app.get('/edit', function (req, res){
-  var query = "select * from itemsentered where userid = '1';";
+  var query = "select * from itemsentered where userid = '"+ ID +"';";
   db.any(query)
     .then(function (rows) { 
   console.log(rows)
@@ -96,33 +96,37 @@ app.get('/edit', function (req, res){
     })
   })
 })
-// helper functions that work with database
-  class table {
-    static storeAccount (use,pas,ema,repas){
-      return new Promise( (resolve, reject) => {
-        if(repas != pas){
-          const error = new Error('repet passord does not match');
-          return reject(error);
-        }
-        if(use.length > 64){
-          const error = new Error('Username is too long');
-          return reject(error);
-        }
-        if(pas.length > 64){
-          const error = new Error('Password is too long');
-          return reject(error);
-        }
-        var q = "insert into userInfo (userID, firstName, lastName, username, password, email) values( (Select max(userID) + 1 from (select * from userInfo) a),'NA', 'NA', $1, $2, $3)"
-        db.none(
-          q,
-          [use, pas, ema]
-        );
-        resolve();
-      });
-    }
-  }
 
-  var username = '';
+
+// helper functions that work with database
+class table {
+  static storeAccount (use,pas,ema,repas){
+    return new Promise( (resolve, reject) => {
+      if(repas != pas){
+        const error = new Error('repet passord does not match');
+        return reject(error);
+      }
+      if(use.length > 64){
+        const error = new Error('Username is too long');
+        return reject(error);
+      }
+      if(pas.length > 64){
+        const error = new Error('Password is too long');
+        return reject(error);
+      }
+      var q = "insert into userInfo (userID, firstName, lastName, username, password, email) values( (Select max(userID) + 1 from (select * from userInfo) a),'NA', 'NA', $1, $2, $3)"
+      db.none(
+        q,
+        [use, pas, ema]
+      );
+      resolve();
+    });
+  }
+}
+
+var username = '';
+
+
 app.post('/create_account/add_user',function (req, res){
 
   var usr = req.body.username;
@@ -175,6 +179,30 @@ app.post('/login/verify', function (req, res){
           res.redirect('/login');
         }
     })
+})
+
+app.post('/add/commit', function (req, res){
+  var name = req.body.names;
+  var Asset = req.body.a;
+  var Liab = req.body.s;
+  var value = req.body.value;
+  var cat = req.body.cat;
+  var indic;
+  if(Asset && Liab){
+  alert('Cannot be both an Asset and a Liability');
+  }
+  else if(Asset){
+  indic = 1;
+  }
+  else if(Liab){
+  indic = 0;
+  }
+  else{
+  alert('Must be either an Asset or a Liability');
+  }
+  var query = "insert into itemsEntered (itemID, userID, name, category, type, amount) values ((Select max(itemID) + 1 from (select * from itemsEntered) a), '" + ID + "','" + name + "','" + cat + "','" + indic + "','" + value + "');"
+  db.any(query);
+  res.redirect('/add');
 })
 
 
