@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+var alert = require('alert-node');
 
 
 app.use(express.static('public'));
@@ -9,9 +10,6 @@ var pgp = require('pg-promise')();
 var bodyParser = require('body-parser'); //Ensure our body-parser tool has been added
 app.use(bodyParser.json());              // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
-
-
-
 
 const dbConfig = {
   host: 'localhost',
@@ -51,18 +49,27 @@ app.get('/create_account', function (req, res){
 })
 
 app.get('/home', function (req, res) {
+  var up1 = "UPDATE networthinfo Set totalAssets = ASSET.totA FROM (Select userID, sum(amount) totA from itemsEntered where type = 1 Group by userId) ASSET WHERE networthinfo.userID = ASSET.userID;";
+  var up2 = "UPDATE networthinfo Set totalLiabilities = LIAB.totA FROM (Select userID, sum(amount) totA from itemsEntered where type = 0 Group by userId) LIAB WHERE networthinfo.userID = LIAB.userID;";
+  var up3 = "UPDATE netWorthInfo SET netWorth = (totalAssets - totalLiabilities);";
   var query = "select * from networthinfo where userid = '" + ID + "';";
-  db.any(query)
-    .then(function (rows) { 
-  console.log(rows)
-        res.render('home',{
-      my_title: "Home Page",
-      data: rows
+  db.task('get-everything',task => {
+  return task.batch([
+    task.any(up1),
+    task.any(up2),
+    task.any(up3),
+    task.any(query)
+  ]);
     })
-        })
-  .catch(function (err) {
+    .then(function (rows) { 
+        res.render('home',{
+          my_title: "Home Page",
+          data: rows[3]
+      })
+    })
+    .catch(function (err) {
             // display error message in case an error
-            req.flash('error', err);
+            alert('error');
             res.render('home', {
                 title: 'Home Page Error',
                 data: ''
@@ -72,10 +79,9 @@ app.get('/home', function (req, res) {
 
 
 app.get('/add', function (req, res){
-  var query = "select * from itemsentered where userid = '"+ ID +"';";
+  var query = "select * from itemsentered where userid = '" + ID + "';";
   db.any(query)
     .then(function (rows) { 
-  console.log(rows)
         res.render('Calculation',{
       my_title: "Add Page",
       data: rows
@@ -86,65 +92,25 @@ app.get('/add', function (req, res){
 
 
 app.get('/edit', function (req, res){
-  var query = "select * from itemsentered where userid = '"+ ID +"';";
+  var query = "select * from itemsentered where userid = '" + ID + "';";
   db.any(query)
     .then(function (rows) { 
-  console.log(rows)
         res.render('edit',{
       my_title: "edit Page",
       data: rows
     })
   })
 })
-// helper functions that work with database
-  class table {
-    static storeAccount (use,pas,ema,repas, first, last){
-      return new Promise( (resolve, reject) => {
-        var re = /\S+@\S+\.\S+/;
-        if(!use || !pas || !ema || !repas || !first || !last){
-          const error = new Error('Please enter all box');
-          return reject(error);
-        }
-        if(!re.test(ema)){
-          const error = new Error('The email is invalid');
-          return reject(error);
-        }
-        if(repas != pas){
-          const error = new Error('repet passord does not match');
-          return reject(error);
-        }
-        if(use.length > 64){
-          const error = new Error('Username is too long');
-          return reject(error);
-        }
-        if(pas.length > 64){
-          const error = new Error('Password is too long');
-          return reject(error);
-        }
-        var q = "insert into userInfo (userID, firstName, lastName, username, password, email) values( (Select max(userID) + 1 from (select * from userInfo) a),$4, $5, $1, $2, $3)"
-        db.none(
-          q,
-          [use, pas, ema,first, first, last]
-        );
-        resolve();
-      });
-    }
-  }
+
 
 app.post('/create_account/add_user',function (req, res){
-  var first = req.body.first;
-  var last = req.body.last
+
   var usr = req.body.username;
   var pass = req.body.password;
   var email_ = req.body.email;
-  var repas = req.body.repassword;
   console.log(usr);
   console.log(pass);
   console.log(email_);
-  console.log(repas);
-  console.log(first);
-  console.log(last);
-
 
   //var user_query = 'SELECT * FROM userInfo;';
   var user_query = "SELECT username FROM userInfo WHERE username = '"+ usr + "';";
@@ -152,31 +118,17 @@ app.post('/create_account/add_user',function (req, res){
 
   db.task('get-everything', task => {
     return task.batch([
-      task.none(user_query),
-      task.none(email_query)
+      task.any(user_query),
+      task.any(email_query)
       ]);
   })
   .then(info => {
-    return table.storeAccount( usr, pass, email_, repas, first, last );
-  })
-  .then( () => {
-    var query = "SELECT username, password, userID FROM userInfo WHERE username = '" + usr + "' AND password = '" + pass + "';";
-      return db.any(query);
-  })
-  .then(rows => {
-    if(rows.length == 1){
-      ID = rows[0].userid;
-      res.redirect('/home');
-    }
-    else{
-      res.redirect('/login');
-    }
+    res.redirect('/create_account');
+    console.log('it worked!!!!!!!!!!!!!!!!');
   })
   .catch(error => {
     res.redirect('/create_account');
-    //popup.alert({content: 'Username or Email is already exist'});
-    console.log('there is an error');
-    throw (error);
+    console.log('there was an error!!!');
   })
 })
 
@@ -187,18 +139,91 @@ app.post('/login/verify', function (req, res){
   db.any(query)
     .then(function (rows) { 
         if(rows.length == 1){
-          console.log(ID);
-          ID = rows[0].userid;
-;
-          res.redirect('/home');
-        }
-        else{
-          res.redirect('/login');
-        }
-    })
+      ID = rows[0].userid;
+      res.redirect('/home');
+  }
+  else{
+    res.redirect('/login');
+  }
+})
+})
+
+app.post('/add/commit', function (req, res){
+  var name = req.body.names;
+  var Asset = req.body.a;
+  var Liab = req.body.s;
+  var value = req.body.value;
+  var cat = req.body.cat;
+  var indic;
+  if(Asset && Liab){
+  alert('Cannot be both an Asset and a Liability');
+  res.redirect('/add');
+  }
+  else if(Asset){
+  indic = 1;
+  }
+  else if(Liab){
+  indic = 0;
+  }
+  else{
+  alert('Must be either an Asset or a Liability');
+  res.redirect('/add');
+  }
+  
+  if(isNaN(value)){
+     alert('Value has to be a number');
+     res.redirect('/add');
+  }
+  
+  var query = "insert into itemsEntered (itemID, userID, name, category, type, amount) values ((Select max(itemID) + 1 from (select * from itemsEntered) a), '" + ID + "','" + name + "','" + cat + "','" + indic + "','" + value + "');"
+  db.any(query);
+  res.redirect('/add');
 })
 
 
+app.post('/edit/commit', function (req, res){
+  var name = req.body.names;
+  var amount = req.body.newV;
+
+  var edit = "UPDATE itemsEntered Set amount = '" + amount + "' WHERE itemID = (SELECT itemID FROM itemsEntered WHERE name = '" + name + "');";
+  var del = "Delete from itemsEntered where itemID = (SELECT itemID FROM itemsEntered WHERE name = '" + name + "');";
+
+
+  if(isNaN(amount)){
+     alert('Value has to be a number');
+     res.redirect('/edit');
+  }
+
+  if(amount == 0){
+  db.any(del);
+  }
+  else{
+  db.any(edit);
+  }
+  res.redirect('/edit');
+})
+
+/*
+app.post('/home/calc', function(req, res){
+  var up1 = "UPDATE networthinfo Set totalAssets = ASSET.totA FROM (Select userID, sum(amount) totA from itemsEntered where type = 1 Group by userId) ASSET WHERE networthinfo.userID = ASSET.userID;";
+  var up2 = "UPDATE networthinfo Set totalLiabilities = LIAB.totA FROM (Select userID, sum(amount) totA from itemsEntered where type = 0 Group by userId) LIAB WHERE networthinfo.userID = LIAB.userID;";
+  var up3 = "UPDATE netWorthInfo SET netWorth = (totalAssets - totalLiabilities);";
+
+  db.task('get-everything', task => {
+  return task.batch([
+    task.any(up1),
+    task.any(up2),
+    task.any(up3)
+  ])
+  })
+  .then(info => {
+  res.render('/home');
+  console.log('hi');
+  })
+  .catch(error => {
+  console.log('f');
+  })
+})*/
 /*
 <<<<<<< HEAD
 app.post('/create_account', function (req, res){
