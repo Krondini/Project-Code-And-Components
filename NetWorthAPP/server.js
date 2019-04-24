@@ -190,6 +190,7 @@ app.post('/add/commit', function (req, res){
   var indic;
   if(Asset && Liab){
   alert('Cannot be both an Asset and a Liability');
+  res.redirect('/add');
   }
   else if(Asset){
   indic = 1;
@@ -199,7 +200,14 @@ app.post('/add/commit', function (req, res){
   }
   else{
   alert('Must be either an Asset or a Liability');
+  res.redirect('/add');
   }
+  
+  if(isNaN(value)){
+     alert('Value has to be a number');
+     res.redirect('/add');
+  }
+  
   var query = "insert into itemsEntered (itemID, userID, name, category, type, amount) values ((Select max(itemID) + 1 from (select * from itemsEntered) a), '" + ID + "','" + name + "','" + cat + "','" + indic + "','" + value + "');"
   db.any(query);
   res.redirect('/add');
