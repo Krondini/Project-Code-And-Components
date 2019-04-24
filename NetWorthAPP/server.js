@@ -10,12 +10,15 @@ var bodyParser = require('body-parser'); //Ensure our body-parser tool has been 
 app.use(bodyParser.json());              // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
+var popup = require('popups');
+
+
 const dbConfig = {
   host: 'localhost',
   port: 5432,
   database: 'net_worth_db',
   user: 'postgres',
-  password: 'pass'
+  password: 'XIAOxiao1998!'
 };
 
 var db = pgp(dbConfig);
@@ -93,16 +96,43 @@ app.get('/edit', function (req, res){
     })
   })
 })
+// helper functions that work with database
+  class table {
+    static storeAccount (use,pas,ema,repas){
+      return new Promise( (resolve, reject) => {
+        if(repas != pas){
+          const error = new Error('repet passord does not match');
+          return reject(error);
+        }
+        if(use.length > 64){
+          const error = new Error('Username is too long');
+          return reject(error);
+        }
+        if(pas.length > 64){
+          const error = new Error('Password is too long');
+          return reject(error);
+        }
+        var q = "insert into userInfo (userID, firstName, lastName, username, password, email) values( (Select max(userID) + 1 from (select * from userInfo) a),'NA', 'NA', $1, $2, $3)"
+        db.none(
+          q,
+          [use, pas, ema]
+        );
+        resolve();
+      });
+    }
+  }
 
-
+  var username = '';
 app.post('/create_account/add_user',function (req, res){
 
   var usr = req.body.username;
   var pass = req.body.password;
   var email_ = req.body.email;
+  var repas = req.body.repassword;
   console.log(usr);
   console.log(pass);
   console.log(email_);
+  console.log(repas);
 
   //var user_query = 'SELECT * FROM userInfo;';
   var user_query = "SELECT username FROM userInfo WHERE username = '"+ usr + "';";
@@ -110,17 +140,24 @@ app.post('/create_account/add_user',function (req, res){
 
   db.task('get-everything', task => {
     return task.batch([
-      task.any(user_query),
-      task.any(email_query)
+      task.none(user_query),
+      task.none(email_query)
       ]);
   })
   .then(info => {
-    res.redirect('/create_account');
+    return table.storeAccount(usr, pass, email_, repas);
+  })
+  .then( () => {
+   
+    res.redirect('/home');
     console.log('it worked!!!!!!!!!!!!!!!!');
+    
   })
   .catch(error => {
     res.redirect('/create_account');
-    console.log('there was an error!!!');
+    popup.alert({content: 'Username or Email is already exist'});
+    console.log('there is an error');
+    throw (error);
   })
 })
 
@@ -131,13 +168,13 @@ app.post('/login/verify', function (req, res){
   db.any(query)
     .then(function (rows) { 
         if(rows.length == 1){
-      ID = rows[0].userid;
-      res.redirect('/home');
-  }
-  else{
-    res.redirect('/login');
-  }
-})
+          ID = rows[0].userid;
+          res.redirect('/home');
+        }
+        else{
+          res.redirect('/login');
+        }
+    })
 })
 
 
