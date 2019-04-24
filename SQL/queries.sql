@@ -82,7 +82,7 @@ Set amount = 2222
 WHERE itemId = 1;
 
 -- if item amount is set to $0, need to DELETE that row of the table
-Delete itemsEntered where itemId = var_item_id; --sample where var_item_id is a variable passed in
+Delete from itemsEntered where itemId = var_item_id; --sample where var_item_id is a variable passed in
 
 -- UPDATE netWorthInfo table (update all)
 	-- UPDATE TOTAL ASSETS -- 
