@@ -15,7 +15,7 @@ const dbConfig = {
   port: 5432,
   database: 'net_worth_db',
   user: 'postgres',
-  password: 'pass'
+  password: 'XIAOxiao1998!'
 };
 
 var db = pgp(dbConfig);
